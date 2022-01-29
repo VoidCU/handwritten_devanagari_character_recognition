@@ -13,7 +13,8 @@ class predictScreen extends StatefulWidget {
 }
 
 class _predictScreenState extends State<predictScreen> {
-  File selectedImage = File("text.txt");
+  //File selectedImage = File("main.dart");
+  File? selectedImage = null;
   var resJson;
   String predication = "";
 
@@ -28,9 +29,9 @@ class _predictScreenState extends State<predictScreen> {
     request.files.add(
       http.MultipartFile(
         'image',
-        selectedImage.readAsBytes().asStream(),
-        selectedImage.lengthSync(),
-        filename: selectedImage.path.split('/').last,
+        selectedImage!.readAsBytes().asStream(),
+        selectedImage!.lengthSync(),
+        filename: selectedImage!.path.split('/').last,
       ),
     );
     request.headers.addAll(headers);
@@ -62,11 +63,14 @@ class _predictScreenState extends State<predictScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            selectedImage == File("text.txt") || selectedImage == null
+            selectedImage == null
                 ? Text(
                     'Please Pick a image to Upload',
                   )
-                : Image.file(selectedImage),
+                : Image.file(selectedImage!),
+            SizedBox(
+              height: MediaQuery.of(context).size.height * .05,
+            ),
             RaisedButton(
               color: Colors.green[300],
               onPressed: onUploadImage,

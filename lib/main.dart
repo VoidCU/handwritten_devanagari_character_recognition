@@ -4,12 +4,12 @@ import 'dart:ui';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart'; //saves image to gallery
+import 'package:image_picker/image_picker.dart'; //picks image from gallery
 import 'package:permission_handler/permission_handler.dart';
-import 'package:screen_drawing/predictscreen.dart';
-import 'package:screenshot/screenshot.dart';
-import 'package:http/http.dart' as http;
+import 'package:screen_drawing/predictscreen.dart'; //drawing
+import 'package:screenshot/screenshot.dart'; //screen shot
+import 'package:http/http.dart' as http; //for restapi
 
 void main() {
   runApp(MaterialApp(
@@ -27,14 +27,17 @@ class CanvasWriting extends StatefulWidget {
 }
 
 class _CanvasWritingState extends State<CanvasWriting> {
+  //offsets for drwaing in screen
   var offsets = <Offset>[];
-  int display = 0;
-  Offset nulloffset = Offset(-1, -1);
+
+  //controller
   final controller = ScreenshotController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset:
+          false, //for avoiding resize issue due to keyboard
       appBar: AppBar(
         centerTitle: true,
         title: const Text("Nepali character reconigation"),
@@ -49,6 +52,7 @@ class _CanvasWritingState extends State<CanvasWriting> {
           ),
           Center(
             child: Screenshot(
+              //only screenshot this widget
               controller: controller,
               child: Container(
                 height: (MediaQuery.of(context).size.width) * .9,
@@ -56,6 +60,8 @@ class _CanvasWritingState extends State<CanvasWriting> {
                 decoration: BoxDecoration(
                     color: Colors.black, border: Border.all(width: 2)),
                 child: GestureDetector(
+                  //knows drags on screen
+                  //onpanstart--> pointer toched the screen and started to move
                   onPanStart: (details) {
                     setState(() {
                       if (details.localPosition.dx > 0 &&
@@ -64,6 +70,7 @@ class _CanvasWritingState extends State<CanvasWriting> {
                       }
                     });
                   },
+                  //onpanupdate --> pointer drag in screen
                   onPanUpdate: (details) {
                     setState(() {
                       if (details.localPosition.dx > 0 &&
@@ -72,8 +79,11 @@ class _CanvasWritingState extends State<CanvasWriting> {
                       }
                     });
                   },
+                  //onpanend--> remove the pointer
                   onPanEnd: (details) {},
+
                   child: CustomPaint(
+                    //draws the offsets
                     painter: HandPainter(offsets),
                   ),
                 ),
@@ -81,59 +91,56 @@ class _CanvasWritingState extends State<CanvasWriting> {
             ),
           ),
           SizedBox(
+            //extra space hehe
             height: (MediaQuery.of(context).size.height) * .15,
           ),
         ],
       ),
-      floatingActionButton: Column(
-        mainAxisAlignment: MainAxisAlignment.end,
+      floatingActionButton: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              FloatingActionButton(
-                  child: Icon(Icons.book),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => predictScreen()));
-                  }),
-              SizedBox(
-                width: (MediaQuery.of(context).size.width) * .4,
-              ),
-              Column(
-                children: [
-                  FloatingActionButton(
-                    child: Icon(Icons.save),
-                    onPressed: () async {
-                      final image = await controller.capture();
-                      if (image == null) return;
-                      await saveImage(image);
-                    },
-                  ),
-                  SizedBox(
-                    height: 5,
-                  ),
-                  FloatingActionButton(
-                    child: Icon(Icons.restore_outlined),
-                    onPressed: () {
-                      setState(() {
-                        offsets = <Offset>[];
-                      });
-                    },
-                  ),
-                ],
-              ),
-            ],
+          FloatingActionButton(
+              //Goes to predict Screen
+              child: Icon(Icons.book),
+              onPressed: () {
+                print(File("main.dart"));
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => predictScreen()));
+              }),
+          SizedBox(
+            width: (MediaQuery.of(context).size.width) * .33,
+          ),
+          FloatingActionButton(
+            //saves the drawn image
+            child: Icon(Icons.save),
+            onPressed: () async {
+              final image = await controller.capture();
+              if (image == null) return;
+              await saveImage(image);
+              setState(() {
+                offsets = <Offset>[];
+              });
+            },
+          ),
+          SizedBox(
+            width: (MediaQuery.of(context).size.width) * .1,
+          ),
+          FloatingActionButton(
+            //clears the image field
+            child: Icon(Icons.restore_outlined),
+            onPressed: () {
+              setState(() {
+                offsets = <Offset>[];
+              });
+            },
           ),
         ],
       ),
     );
   }
 
+//fucntion to saveimage to gallary
   Future<String> saveImage(Uint8List image) async {
-    //postData(image);
     await [Permission.storage].request();
     const name = 'predict';
     final result = await ImageGallerySaver.saveImage(image, name: name);
@@ -141,6 +148,7 @@ class _CanvasWritingState extends State<CanvasWriting> {
   }
 }
 
+//class to draw the offset points
 class HandPainter extends CustomPainter {
   final offsets;
 
