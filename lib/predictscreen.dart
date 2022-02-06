@@ -16,7 +16,9 @@ class _predictScreenState extends State<predictScreen> {
   //File selectedImage = File("main.dart");
   File? selectedImage = null;
   var resJson;
-  String predication = "";
+  String prediction = "";
+
+  // var arr = ['क', 'ख', 'ग', 'घ', 'ङ'];
 
   onUploadImage() async {
     var request = http.MultipartRequest(
@@ -24,7 +26,8 @@ class _predictScreenState extends State<predictScreen> {
         //for andriod studio
         //Uri.parse("http://10.0.2.2:5000/"),
         //for mobile
-        Uri.parse("http://192.168.1.68:5000/"));
+        Uri.parse("http://192.168.1.75:5000/"));
+
     Map<String, String> headers = {"Content-type": "multipart/form-data"};
     request.files.add(
       http.MultipartFile(
@@ -40,7 +43,9 @@ class _predictScreenState extends State<predictScreen> {
     http.Response response = await http.Response.fromStream(res);
     setState(() {
       resJson = jsonDecode(response.body);
-      predication = resJson['message'];
+      prediction = resJson['message'];
+      // prediction = arr[2];
+      // print(prediction);
     });
   }
 
@@ -83,7 +88,7 @@ class _predictScreenState extends State<predictScreen> {
               height: 10,
             ),
             Text(
-              predication,
+              prediction,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
             )
           ],
