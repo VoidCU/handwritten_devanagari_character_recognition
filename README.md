@@ -1,16 +1,7 @@
-# screen_drawing
+# <p align=center> Flutter app for Handwritten_devanagari_character_recognition</p>
 
-A new Flutter project.
+This app is built using flutter which provides folling functions:
+- Provide 1:1 ratio black screen to draw character and save them
+- then predict the image taken from gallary
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## [updating more soon]
